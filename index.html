@@ -14,28 +14,85 @@
       background: linear-gradient(135deg, #350e42, #4f0000);
       font-family: system-ui, sans-serif;
       color: #5a2a3a;
+      padding: 40px 16px;
     }
+
     .card {
       background: #fff5f7;
       border: 3px solid #821111;
-      border-radius: 0;          /* ← острые углы */
+      border-radius: 0;
       padding: 40px;
       text-align: center;
-      max-width: 400px;
+      max-width: 480px;
+      width: 100%;
       box-shadow: 0 10px 30px rgba(214, 58, 90, 0.2);
     }
+
     h1 {
       margin: 0 0 10px;
       color: #d63a5a;
       font-size: 2rem;
     }
+
     p {
       margin: 8px 0;
       line-height: 1.5;
     }
+
     .emoji {
       font-size: 3rem;
       margin-bottom: 15px;
+    }
+
+    /* ===== блок игр ===== */
+    .games-title {
+      margin: 30px 0 16px;
+      font-size: 1.3rem;
+      color: #821111;
+      font-weight: 700;
+      border-top: 2px solid #821111;
+      padding-top: 20px;
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+
+    .game {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .game img {
+      width: 100%;
+      aspect-ratio: 3 / 4;
+      object-fit: cover;
+      border: 2px solid #821111;
+      border-radius: 0;
+    }
+
+    .game .name {
+      margin-top: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #5a2a3a;
+      line-height: 1.2;
+    }
+
+    .game .score {
+      margin-top: 3px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #d63a5a;
+    }
+
+    @media (max-width: 420px) {
+      .games-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
   </style>
 </head>
@@ -50,6 +107,48 @@
     <h1>MrFly</h1>
     <p>17yo Male</p>
     <p>Всё по-немногу</p>
+
+    <!-- блок игр -->
+    <div class="games-title">Favorite Games</div>
+    <div class="games-grid">
+
+      <div class="game">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/570/library_600x900_2x.jpg" alt="Dota 2">
+        <div class="name">Dota 2</div>
+        <div class="score">9.5 / 10</div>
+      </div>
+
+      <div class="game">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/730/library_600x900_2x.jpg" alt="CS2">
+        <div class="name">CS2</div>
+        <div class="score">9.0 / 10</div>
+      </div>
+
+      <div class="game">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/252950/library_600x900_2x.jpg" alt="Rocket League">
+        <div class="name">Rocket League</div>
+        <div class="score">8.5 / 10</div>
+      </div>
+
+      <div class="game">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/1172470/library_600x900_2x.jpg" alt="Apex">
+        <div class="name">Apex Legends</div>
+        <div class="score">8.0 / 10</div>
+      </div>
+
+      <div class="game">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/578080/library_600x900_2x.jpg" alt="PUBG">
+        <div class="name">PUBG</div>
+        <div class="score">7.5 / 10</div>
+      </div>
+
+      <div class="game">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/271590/library_600x900_2x.jpg" alt="GTA V">
+        <div class="name">GTA V</div>
+        <div class="score">9.0 / 10</div>
+      </div>
+
+    </div>
   </div>
 </body>
 </html>
