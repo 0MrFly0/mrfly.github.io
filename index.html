@@ -16,29 +16,25 @@
       color: #5a2a3a;
       padding: 40px 16px;
     }
-
     .card {
       background: #fff5f7;
       border: 3px solid #821111;
       border-radius: 0;
       padding: 40px;
       text-align: center;
-      max-width: 480px;
+      max-width: 640px;   /* ← шире */
       width: 100%;
       box-shadow: 0 10px 30px rgba(214, 58, 90, 0.2);
     }
-
     h1 {
       margin: 0 0 10px;
       color: #d63a5a;
       font-size: 2rem;
     }
-
     p {
       margin: 8px 0;
       line-height: 1.5;
     }
-
     .emoji {
       font-size: 3rem;
       margin-bottom: 15px;
@@ -54,18 +50,48 @@
       padding-top: 20px;
     }
 
+    /* кнопки фильтра */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+    .filters button {
+      background: #fff5f7;
+      border: 2px solid #821111;
+      color: #821111;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      cursor: pointer;
+      border-radius: 0;
+    }
+    .filters button.active,
+    .filters button:hover {
+      background: #821111;
+      color: #fff5f7;
+    }
+
     .games-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 14px;
     }
-
     .game {
       display: flex;
       flex-direction: column;
       align-items: center;
+      cursor: pointer;
+      transition: transform 0.15s;
     }
-
+    .game:hover {
+      transform: scale(1.05);
+    }
+    .game.hidden {
+      display: none;
+    }
     .game img {
       width: 100%;
       aspect-ratio: 1 / 1;
@@ -73,7 +99,6 @@
       border: 2px solid #821111;
       border-radius: 0;
     }
-
     .game .name {
       margin-top: 6px;
       font-size: 0.75rem;
@@ -81,12 +106,70 @@
       color: #5a2a3a;
       line-height: 1.2;
     }
-
     .game .score {
       margin-top: 3px;
       font-size: 0.8rem;
       font-weight: 700;
       color: #d63a5a;
+    }
+
+    /* ===== модальное окно ===== */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+    .modal-overlay.open {
+      display: flex;
+    }
+    .modal {
+      background: #fff5f7;
+      border: 3px solid #821111;
+      border-radius: 0;
+      padding: 28px;
+      max-width: 360px;
+      width: 100%;
+      text-align: center;
+      position: relative;
+    }
+    .modal img {
+      width: 120px;
+      height: 120px;
+      object-fit: cover;
+      border: 2px solid #821111;
+      margin-bottom: 12px;
+    }
+    .modal h2 {
+      margin: 0 0 8px;
+      color: #d63a5a;
+      font-size: 1.3rem;
+    }
+    .modal .modal-score {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #821111;
+      margin-bottom: 12px;
+    }
+    .modal .modal-review {
+      font-size: 0.95rem;
+      color: #5a2a3a;
+      line-height: 1.5;
+    }
+    .modal .close-btn {
+      position: absolute;
+      top: 8px;
+      right: 12px;
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      color: #821111;
+      cursor: pointer;
+      line-height: 1;
     }
 
     @media (max-width: 420px) {
@@ -108,47 +191,10 @@
     <p>17yo Male</p>
     <p>Всё по-немногу</p>
 
-    <!-- блок игр -->
     <div class="games-title">Games</div>
-    <div class="games-grid">
 
-      <div class="game">
-        <img src="SPecteDestruction.webp" alt="forsaken">
-        <div class="name">Forsaken</div>
-        <div class="score">8 / 10</div>
-      </div>
-
-      <div class="game">
-        <img src="square-image (1).jpg" alt="goi">
-        <div class="name">Getting Over It with Bennett Foddy</div>
-        <div class="score">10 / 10</div>
-      </div>
-
-      <div class="game">
-        <img src="OBFoC2B2fAdbdKR9iPCJcDQaSKylLmhw.avif" alt="tboi">
-        <div class="name">The Binding Of Isaac: Rebirth</div>
-        <div class="score">8 / 10</div>
-      </div>
-
-      <div class="game">
-        <img src="cuhead.png" alt="Cuphead">
-        <div class="name">Cuphead</div>
-        <div class="score">6 / 10</div>
-      </div>
-
-      <div class="game">
-        <img src="Hollow_Knight_2026_cover_art.jpg" alt="hk">
-        <div class="name">Hollow Knight</div>
-        <div class="score">7 / 10</div>
-      </div>
-
-      <div class="game">
-        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/271590/library_600x900_2x.jpg" alt="GTA V">
-        <div class="name">GTA V</div>
-        <div class="score">5 / 10</div>
-      </div>
-
-    </div>
-  </div>
-</body>
-</html>
+    <!-- кнопки фильтра -->
+    <div class="filters">
+      <button class="active" data-filter="all">Все</button>
+      <button data-filter="high">9–10</button>
+      <button data-filter="mid">7–8</button>
