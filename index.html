@@ -196,5 +196,107 @@
     <!-- кнопки фильтра -->
     <div class="filters">
       <button class="active" data-filter="all">Все</button>
-      <button data-filter="high">9–10</button>
-      <button data-filter="mid">7–8</button>
+      <button data-filter="говно">Говницо💑</button>
+      <button data-filter="таксебе">Пойдет😐</button>
+      <button data-filter="норм">Нормально👍</button>
+      <button data-filter="гуд">Хорошечно👏</button>
+      <button data-filter="эс">Идеально🌟</button>
+    </div>
+
+    <div class="games-grid" id="gamesGrid">
+
+      <div class="game" data-score="8" data-review="Крутой хоррор, атмосфера огонь, иногда бесит лагами.">
+        <img src="SPecteDestruction.webp" alt="Forsaken">
+        <div class="name">Forsaken</div>
+        <div class="score">8 / 10</div>
+      </div>
+
+      <div class="game" data-score="10" data-review="Шедевр. Боль, страдания и кайф одновременно.">
+        <img src="square-image (1).jpg" alt="Getting Over It">
+        <div class="name">Getting Over It with Bennett Foddy</div>
+        <div class="score">10 / 10</div>
+      </div>
+
+      <div class="game" data-score="8" data-review="Затягивает на сотни часов. Рандомайз топ.">
+        <img src="OBFoC2B2fAdbdKR9iPCJcDQaSKylLmhw.avif" alt="TBOI">
+        <div class="name">The Binding Of Isaac: Rebirth</div>
+        <div class="score">8 / 10</div>
+      </div>
+
+      <div class="game" data-score="6" data-review="Красиво и сложно, но иногда слишком жестко.">
+        <img src="cuhead.png" alt="Cuphead">
+        <div class="name">Cuphead</div>
+        <div class="score">6 / 10</div>
+      </div>
+
+      <div class="game" data-score="7" data-review="Атмосфера и мир — огонь. Боссы местами бесят.">
+        <img src="Hollow_Knight_2026_cover_art.jpg" alt="Hollow Knight">
+        <div class="name">Hollow Knight</div>
+        <div class="score">7 / 10</div>
+      </div>
+
+      <div class="game" data-score="5" data-review="Когда-то было топ, сейчас уже приелось.">
+        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/271590/library_600x900_2x.jpg" alt="GTA V">
+        <div class="name">GTA V</div>
+        <div class="score">5 / 10</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- модальное окно -->
+  <div class="modal-overlay" id="modal">
+    <div class="modal">
+      <button class="close-btn" id="closeModal">&times;</button>
+      <img id="modalImg" src="" alt="">
+      <h2 id="modalName"></h2>
+      <div class="modal-score" id="modalScore"></div>
+      <div class="modal-review" id="modalReview"></div>
+    </div>
+  </div>
+
+  <script>
+    // --- фильтр ---
+    const buttons = document.querySelectorAll('.filters button');
+    const games = document.querySelectorAll('.game');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const filter = btn.dataset.filter;
+
+        games.forEach(game => {
+          const score = game.dataset.score;
+          let show = false;
+          
+          if (filter === 'all') show = true;
+          else show = score === filter;
+
+          game.classList.toggle('hidden', !show);
+        });
+      });
+    });
+
+    // --- модалка ---
+    const modal = document.getElementById('modal');
+    const closeBtn = document.getElementById('closeModal');
+
+    games.forEach(game => {
+      game.addEventListener('click', () => {
+        document.getElementById('modalImg').src = game.querySelector('img').src;
+        document.getElementById('modalName').textContent = game.querySelector('.name').textContent;
+        document.getElementById('modalScore').textContent = game.querySelector('.score').textContent;
+        document.getElementById('modalReview').textContent = game.dataset.review || 'Отзыв пока не написан.';
+        modal.classList.add('open');
+      });
+    });
+
+    closeBtn.addEventListener('click', () => modal.classList.remove('open'));
+    modal.addEventListener('click', e => {
+      if (e.target === modal) modal.classList.remove('open');
+    });
+  </script>
+</body>
+</html>
