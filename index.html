@@ -3,135 +3,233 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Моя страница</title>
+  <title>MrFly — Моя страница</title>
+
   <style>
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       margin: 0;
       min-height: 100vh;
       display: flex;
       justify-content: center;
-      align-items: center;
+      align-items: flex-start;
       background: linear-gradient(135deg, #350e42, #4f0000);
       font-family: system-ui, sans-serif;
       color: #5a2a3a;
       padding: 40px 16px;
     }
+
+    /* Расположение двух карточек */
+    .page-layout {
+      width: 100%;
+      max-width: 1100px;
+      display: grid;
+      grid-template-columns: minmax(260px, 0.8fr) minmax(0, 1.5fr);
+      gap: 24px;
+      align-items: start;
+    }
+
+    /* Общий стиль карточек */
     .card {
       background: #fff5f7;
       border: 3px solid #821111;
       border-radius: 0;
-      padding: 40px;
+      padding: 32px;
       text-align: center;
-      max-width: 640px;
+      min-width: 0;
       width: 100%;
       box-shadow: 0 10px 30px rgba(214, 58, 90, 0.2);
+
+      opacity: 0;
+      transform: translateY(24px);
+      animation: cardAppear 0.8s cubic-bezier(.2, .75, .25, 1) forwards;
     }
+
+    /* Профиль появляется первым */
+    .profile-card {
+      animation-delay: 0.1s;
+    }
+
+    /* Карточка игр появляется чуть позже */
+    .games-card {
+      animation-delay: 0.3s;
+    }
+
+    @keyframes cardAppear {
+      from {
+        opacity: 0;
+        transform: translateY(24px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     h1 {
       margin: 0 0 10px;
       color: #d63a5a;
       font-size: 2rem;
     }
+
     p {
       margin: 8px 0;
       line-height: 1.5;
     }
+
+    .avatar {
+      width: 200px;
+      height: 200px;
+      max-width: 100%;
+      border-radius: 50%;
+      border: 3px solid #4f0000;
+      object-fit: cover;
+      margin-bottom: 15px;
+    }
+
     .emoji {
       font-size: 3rem;
       margin-bottom: 15px;
     }
+
     .games-title {
-      margin: 30px 0 16px;
-      font-size: 1.3rem;
+      margin: 0 0 20px;
+      font-size: 1.5rem;
       color: #821111;
       font-weight: 700;
-      border-top: 2px solid #821111;
-      padding-top: 20px;
     }
+
+    /* Фильтры */
     .filters {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       justify-content: center;
-      margin-bottom: 18px;
+      margin-bottom: 20px;
     }
+
     .filters button {
       background: #fff5f7;
       border: 2px solid #821111;
       color: #821111;
-      padding: 6px 14px;
+      padding: 7px 12px;
       font-size: 0.85rem;
       font-weight: 700;
       cursor: pointer;
       border-radius: 0;
+      transition: background 0.2s, color 0.2s;
     }
+
     .filters button.active,
     .filters button:hover {
       background: #821111;
       color: #fff5f7;
     }
+
+    .filters button:focus-visible,
+    .game:focus-visible,
+    .close-btn:focus-visible {
+      outline: 3px solid #d63a5a;
+      outline-offset: 3px;
+    }
+
+    /* Сетка игр */
     .games-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px 14px;
     }
+
     .game {
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-width: 0;
       cursor: pointer;
-      transition: transform 0.15s;
+      transition: transform 0.2s ease;
     }
+
     .game:hover {
-      transform: scale(1.05);
+      transform: translateY(-4px);
     }
+
     .game.hidden {
       display: none;
     }
+
     .game img {
+      display: block;
       width: 100%;
       aspect-ratio: 1 / 1;
       object-fit: cover;
       border: 2px solid #821111;
       border-radius: 0;
     }
+
     .game .name {
-      margin-top: 6px;
-      font-size: 0.75rem;
+      margin-top: 7px;
+      font-size: 0.8rem;
       font-weight: 600;
       color: #5a2a3a;
-      line-height: 1.2;
+      line-height: 1.3;
+      overflow-wrap: anywhere;
     }
+
     .game .score {
-      margin-top: 3px;
-      font-size: 0.8rem;
+      margin-top: 4px;
+      font-size: 0.85rem;
       font-weight: 700;
       color: #d63a5a;
     }
+
+    /* Окно с рецензией */
     .modal-overlay {
       display: none;
       position: fixed;
       inset: 0;
-      background: rgba(0,0,0,0.6);
+      background: rgba(0, 0, 0, 0.7);
       z-index: 100;
       justify-content: center;
       align-items: center;
       padding: 20px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
     }
+
     .modal-overlay.open {
       display: flex;
+      opacity: 1;
     }
+
     .modal {
       background: #fff5f7;
       border: 3px solid #821111;
-      border-radius: 0;
       padding: 28px;
-      max-width: 360px;
+      max-width: 480px;
       width: 100%;
       text-align: center;
       position: relative;
-      max-height: 80vh;
+      max-height: 85vh;
       overflow-y: auto;
+      animation: modalAppear 0.25s ease;
     }
+
+    @keyframes modalAppear {
+      from {
+        transform: translateY(12px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
     .modal img {
       width: 120px;
       height: 120px;
@@ -139,140 +237,355 @@
       border: 2px solid #821111;
       margin-bottom: 12px;
     }
+
     .modal h2 {
-      margin: 0 0 8px;
+      margin: 0 25px 8px;
       color: #d63a5a;
       font-size: 1.3rem;
+      overflow-wrap: anywhere;
     }
-    .modal .modal-score {
+
+    .modal-score {
       font-size: 1.1rem;
       font-weight: 700;
       color: #821111;
       margin-bottom: 12px;
     }
-    .modal .modal-review {
+
+    .modal-review {
       font-size: 0.95rem;
       color: #5a2a3a;
-      line-height: 1.5;
+      line-height: 1.7;
+      text-align: left;
+      white-space: pre-wrap;
+      overflow-wrap: anywhere;
     }
-    .modal .close-btn {
+
+    .close-btn {
       position: absolute;
       top: 8px;
       right: 12px;
       background: none;
       border: none;
-      font-size: 1.5rem;
+      font-size: 1.8rem;
       color: #821111;
       cursor: pointer;
       line-height: 1;
     }
+
+    /* Планшеты и телефоны */
+    @media (max-width: 760px) {
+      body {
+        padding: 20px 12px;
+      }
+
+      .page-layout {
+        grid-template-columns: 1fr;
+        max-width: 560px;
+        gap: 18px;
+      }
+
+      .card {
+        padding: 24px 18px;
+      }
+    }
+
     @media (max-width: 420px) {
       .games-grid {
-        grid-template-columns: repeat(2, 1fr);
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .filters button {
+        font-size: 0.8rem;
+        padding: 6px 9px;
+      }
+    }
+
+    /* Отключение анимаций по настройкам устройства */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-delay: 0ms !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+
+      .card {
+        opacity: 1;
+        transform: none;
       }
     }
   </style>
 </head>
+
 <body>
-  <div class="card">
-    <img 
-      src="square-image.jpg" 
-      alt="аватар"
-      style="width: 200px; height: 200px; border-radius: 50%; border: 3px solid #4f0000; object-fit: cover; margin-bottom: 15px;"
-    >
-    <div class="emoji">💻</div>
-    <h1>MrFly</h1>
-    <p>17yo Male</p>
-    <p>Всё по-немногу</p>
 
-    <div class="games-title">Games</div>
+  <main class="page-layout">
 
-    <div class="filters">
-      <button class="active" data-filter="all">Все</button>
-      <button data-filter="говно">Говницо💑</button>
-      <button data-filter="таксебе">Пойдет😐</button>
-      <button data-filter="норм">Нормально👍</button>
-      <button data-filter="гуд">Хорошечно👏</button>
-      <button data-filter="эс">Идеально🌟</button>
-    </div>
+    <!-- КАРТОЧКА ПРОФИЛЯ -->
+    <section class="card profile-card">
+      <img
+        src="square-image.jpg"
+        alt="Аватар MrFly"
+        class="avatar"
+      >
 
-    <div class="games-grid" id="gamesGrid">
-      <div class="game" data-score="гуд" data-review="Крутой хоррор, атмосфера огонь, иногда бесит лагами.">
-        <img src="SPecteDestruction.webp" alt="Forsaken">
-        <div class="name">Forsaken</div>
-        <div class="score">8 / 10</div>
-      </div>
-      <div class="game" data-score="эс" data-review="Игра,которая в своё время заставила всех стримеров и летсплейщиков ломать свои девайсы. Она умело маскируется под rage game и по большей части она и являлась бы просто стримерским слопом с корявым управлением и сделанным на коленке, если бы не её философия. Многие вероятно подметили её, как просто троллинг над игроком, говоря цитаты о значении проигрыша, включая расслабляющую музыку, намёк на Сизифа, но вместо валуна молот. Однако на самом деле философия этой игры довольно хорошая и искренняя. Бэннет Фоди и не скрывал, что хотел страдания игроков, он буквально сказал об этом в трейлере. Однако его отношение к страданию видно довольно явно. Он заставляет нас страдать не для садистских желаний, а для того чтобы мы научились преодолевать гнев и разочарование. Главное, что преподносит эта игра: ‘Падение в самый низ не означает крах, это просто возвращение назад с новыми знаниями’, и после этого становится понятно, зачем нужно такое корявое управление. Как я понял физику этой игры (а я прошел её два раза): чем больше ты делаешь быстрых и резких движений, тем хуже твой персонаж что-либо делает. Но если делать все плавно и аккуратно, а желательно еще и медленно, то прыжки и устойчивость будут намного выше. То есть игра учит к тому же и терпению, так как после того как ты падаешь вниз, ты с большей вероятностью будешь пытаться пройти этап быстрее, торопливо, что приведёт тебя к падению ещё ниже. Но для меня эта идея создателя разбилась в ♥♥♥♥♥. Я прошёл игру слишком быстро в первый раз, упав всего пару раз и я даже не успел ‘насладиться’ сильной фрустрацией, и это меня реально разочаровывает. Но это к сожалению исключительно моя вина, так как поиграл в эту игру слишком поздно, уже посмотрев контент по ней много раз. Но вообще это одна из немногих игр, которая и сложная и не душная, и определённо войдет в мой топ игр. Наверное потому что в большинстве игр сложность либо искусственная, либо там присутствует какой-то элемент рандома. В этой же игре ты не можешь винить не себя, здесь нет случайностей, всё хорошо вымерено. Как по мне это уникальность, штучный продукт, а остальные игры данного семейства, по типу boxman struggle я не вижу смысла проходить, так как они просто не поведают ничего нового. Ну и музыка в титрах отличная, заела в голове.">
-        <img src="square-image (1).jpg" alt="Getting Over It">
-        <div class="name">Getting Over It with Bennett Foddy</div>
-        <div class="score">10 / 10</div>
-      </div>
-      <div class="game" data-score="гуд" data-review="Затягивает на сотни часов. Рандомайз топ.">
-        <img src="OBFoC2B2fAdbdKR9iPCJcDQaSKylLmhw.avif" alt="TBOI">
-        <div class="name">The Binding Of Isaac: Rebirth</div>
-        <div class="score">8 / 10</div>
-      </div>
-      <div class="game" data-score="норм" data-review="Красиво и сложно, но иногда слишком жестко.">
-        <img src="cuhead.png" alt="Cuphead">
-        <div class="name">Cuphead</div>
-        <div class="score">6 / 10</div>
-      </div>
-      <div class="game" data-score="гуд" data-review="Атмосфера и мир — огонь. Боссы местами бесят.">
-        <img src="Hollow_Knight_2026_cover_art.jpg" alt="Hollow Knight">
-        <div class="name">Hollow Knight</div>
-        <div class="score">7 / 10</div>
-      </div>
-      <div class="game" data-score="норм" data-review="Обычный опенворлд с так себе сюжетом и персонажами, ну и скамом гоев на деньги через онлайн версию. От неё хотябы глаза не выкалывает, как от Сан Андреса">
-        <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/271590/library_600x900_2x.jpg" alt="GTA V">
-        <div class="name">GTA V</div>
-        <div class="score">5 / 10</div>
-      </div>
-    </div>
-  </div>
+      <div class="emoji">💻</div>
 
-  <div class="modal-overlay" id="modal">
+      <h1>MrFly</h1>
+      <p>17yo Male</p>
+      <p>Всё по-немногу</p>
+    </section>
+
+    <!-- КАРТОЧКА ИГР И РЕЦЕНЗИЙ -->
+    <section class="card games-card">
+
+      <h2 class="games-title">Games</h2>
+
+      <div class="filters">
+        <button class="active" data-filter="all">Все</button>
+        <button data-filter="говно">Говницо💑</button>
+        <button data-filter="таксебе">Пойдет😐</button>
+        <button data-filter="норм">Нормально👍</button>
+        <button data-filter="гуд">Хорошечно👏</button>
+        <button data-filter="эс">Идеально🌟</button>
+      </div>
+
+      <div class="games-grid" id="gamesGrid">
+
+        <!-- FORSAKEN -->
+        <div
+          class="game"
+          data-score="гуд"
+          data-review="Крутой хоррор, атмосфера огонь, иногда бесит лагами."
+          tabindex="0"
+          role="button"
+          aria-label="Открыть рецензию Forsaken"
+        >
+          <img src="SPecteDestruction.webp" alt="Forsaken">
+          <div class="name">Forsaken</div>
+          <div class="score">8 / 10</div>
+        </div>
+
+        <!-- GETTING OVER IT -->
+        <div
+          class="game"
+          data-score="эс"
+          data-review="Игра, которая в своё время заставила всех стримеров и летсплейщиков ломать свои девайсы.
+
+Она умело маскируется под rage game и по большей части она и являлась бы просто стримерским слопом с корявым управлением и сделанным на коленке, если бы не её философия.
+
+Многие вероятно подметили её, как просто троллинг над игроком, говоря цитаты о значении проигрыша, включая расслабляющую музыку, намёк на Сизифа, но вместо валуна молот. Однако на самом деле философия этой игры довольно хорошая и искренняя.
+
+Бэннет Фоди и не скрывал, что хотел страдания игроков, он буквально сказал об этом в трейлере. Однако его отношение к страданию видно довольно явно. Он заставляет нас страдать не для садистских желаний, а для того чтобы мы научились преодолевать гнев и разочарование.
+
+Главное, что преподносит эта игра: «Падение в самый низ не означает крах, это просто возвращение назад с новыми знаниями», и после этого становится понятно, зачем нужно такое корявое управление.
+
+Как я понял физику этой игры (а я прошёл её два раза): чем больше ты делаешь быстрых и резких движений, тем хуже твой персонаж что-либо делает. Но если делать всё плавно и аккуратно, а желательно ещё и медленно, то прыжки и устойчивость будут намного выше.
+
+То есть игра учит к тому же и терпению, так как после того как ты падаешь вниз, ты с большей вероятностью будешь пытаться пройти этап быстрее, торопливо, что приведёт тебя к падению ещё ниже.
+
+Но для меня эта идея создателя разбилась в ♥♥♥♥♥. Я прошёл игру слишком быстро в первый раз, упав всего пару раз и я даже не успел «насладиться» сильной фрустрацией, и это меня реально разочаровывает.
+
+Но это к сожалению исключительно моя вина, так как поиграл в эту игру слишком поздно, уже посмотрев контент по ней много раз.
+
+Но вообще это одна из немногих игр, которая и сложная и не душная, и определённо войдёт в мой топ игр. Наверное потому что в большинстве игр сложность либо искусственная, либо там присутствует какой-то элемент рандома. В этой же игре ты не можешь винить не себя, здесь нет случайностей, всё хорошо вымерено.
+
+Как по мне это уникальность, штучный продукт, а остальные игры данного семейства, по типу Boxman Struggle, я не вижу смысла проходить, так как они просто не поведают ничего нового.
+
+Ну и музыка в титрах отличная, заела в голове."
+          tabindex="0"
+          role="button"
+          aria-label="Открыть рецензию Getting Over It"
+        >
+          <img src="square-image (1).jpg" alt="Getting Over It">
+          <div class="name">Getting Over It with Bennett Foddy</div>
+          <div class="score">10 / 10</div>
+        </div>
+
+        <!-- THE BINDING OF ISAAC -->
+        <div
+          class="game"
+          data-score="гуд"
+          data-review="Затягивает на сотни часов. Рандомайз топ."
+          tabindex="0"
+          role="button"
+          aria-label="Открыть рецензию The Binding of Isaac"
+        >
+          <img
+            src="OBFoC2B2fAdbdKR9iPCJcDQaSKylLmhw.avif"
+            alt="The Binding of Isaac: Rebirth"
+          >
+          <div class="name">The Binding Of Isaac: Rebirth</div>
+          <div class="score">8 / 10</div>
+        </div>
+
+        <!-- CUPHEAD -->
+        <div
+          class="game"
+          data-score="норм"
+          data-review="Красиво и сложно, но иногда слишком жестко."
+          tabindex="0"
+          role="button"
+          aria-label="Открыть рецензию Cuphead"
+        >
+          <img src="cuhead.png" alt="Cuphead">
+          <div class="name">Cuphead</div>
+          <div class="score">6 / 10</div>
+        </div>
+
+        <!-- HOLLOW KNIGHT -->
+        <div
+          class="game"
+          data-score="гуд"
+          data-review="Атмосфера и мир — огонь. Боссы местами бесят."
+          tabindex="0"
+          role="button"
+          aria-label="Открыть рецензию Hollow Knight"
+        >
+          <img src="Hollow_Knight_2026_cover_art.jpg" alt="Hollow Knight">
+          <div class="name">Hollow Knight</div>
+          <div class="score">7 / 10</div>
+        </div>
+
+        <!-- GTA V -->
+        <div
+          class="game"
+          data-score="норм"
+          data-review="Обычный опенворлд с так себе сюжетом и персонажами, ну и скамом гоев на деньги через онлайн версию. От неё хотя бы глаза не выкалывает, как от Сан Андреса."
+          tabindex="0"
+          role="button"
+          aria-label="Открыть рецензию GTA V"
+        >
+          <img
+            src="https://cdn.cloudflare.steamstatic.com/steam/apps/271590/library_600x900_2x.jpg"
+            alt="GTA V"
+          >
+          <div class="name">GTA V</div>
+          <div class="score">5 / 10</div>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ОКНО РЕЦЕНЗИИ -->
+  <div
+    class="modal-overlay"
+    id="modal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalName"
+  >
     <div class="modal">
-      <button class="close-btn" id="closeModal">&times;</button>
+
+      <button
+        class="close-btn"
+        id="closeModal"
+        aria-label="Закрыть"
+      >&times;</button>
+
       <img id="modalImg" src="" alt="">
       <h2 id="modalName"></h2>
       <div class="modal-score" id="modalScore"></div>
       <div class="modal-review" id="modalReview"></div>
+
     </div>
   </div>
 
   <script>
+    // ФИЛЬТРЫ ИГР
     const buttons = document.querySelectorAll('.filters button');
     const games = document.querySelectorAll('.game');
-    buttons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        buttons.forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        const filter = btn.dataset.filter;
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        buttons.forEach(item => item.classList.remove('active'));
+        button.classList.add('active');
+
+        const filter = button.dataset.filter;
+
         games.forEach(game => {
           const score = game.dataset.score;
-          let show = false;
-          if (filter === 'all') show = true;
-          else show = score === filter;
+          const show = filter === 'all' || score === filter;
+
           game.classList.toggle('hidden', !show);
         });
       });
     });
 
+    // ОКНО С РЕЦЕНЗИЕЙ
     const modal = document.getElementById('modal');
     const closeBtn = document.getElementById('closeModal');
+
+    const modalImg = document.getElementById('modalImg');
+    const modalName = document.getElementById('modalName');
+    const modalScore = document.getElementById('modalScore');
+    const modalReview = document.getElementById('modalReview');
+
+    let previousFocus = null;
+
+    function openReview(game) {
+      previousFocus = document.activeElement;
+
+      const img = game.querySelector('img');
+      const name = game.querySelector('.name');
+      const score = game.querySelector('.score');
+
+      modalImg.src = img.src;
+      modalImg.alt = img.alt;
+      modalName.textContent = name.textContent;
+      modalScore.textContent = score.textContent;
+      modalReview.textContent =
+        game.dataset.review || 'Отзыв пока не написан.';
+
+      modal.classList.add('open');
+      document.body.style.overflow = 'hidden';
+      closeBtn.focus();
+    }
+
+    function closeReview() {
+      modal.classList.remove('open');
+      document.body.style.overflow = '';
+
+      if (previousFocus) {
+        previousFocus.focus();
+      }
+    }
+
     games.forEach(game => {
       game.addEventListener('click', () => {
-        document.getElementById('modalImg').src = game.querySelector('img').src;
-        document.getElementById('modalName').textContent = game.querySelector('.name').textContent;
-        document.getElementById('modalScore').textContent = game.querySelector('.score').textContent;
-        document.getElementById('modalReview').textContent = game.dataset.review || 'Отзыв пока не написан.';
-        modal.classList.add('open');
+        openReview(game);
+      });
+
+      // Открытие рецензии клавишами Enter и Space
+      game.addEventListener('keydown', event => {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          openReview(game);
+        }
       });
     });
-    closeBtn.addEventListener('click', () => modal.classList.remove('open'));
-    modal.addEventListener('click', e => {
-      if (e.target === modal) modal.classList.remove('open');
+
+    closeBtn.addEventListener('click', closeReview);
+
+    // Закрытие по нажатию на затемнённый фон
+    modal.addEventListener('click', event => {
+      if (event.target === modal) {
+        closeReview();
+      }
+    });
+
+    // Закрытие клавишей Escape
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && modal.classList.contains('open')) {
+        closeReview();
+      }
     });
   </script>
+
 </body>
 </html>
