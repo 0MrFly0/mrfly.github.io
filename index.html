@@ -220,6 +220,13 @@
       transform: scale(0.96);
     }
 
+    .player-cover img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
     /* ===== FILTERS & GAMES ===== */
     .filters {
       display: flex;
@@ -435,7 +442,9 @@
 
       <!-- Плеер прямо под информацией -->
       <div class="music-player">
-        <div class="player-cover">dfg.webp</div>
+        <div class="player-cover">
+          <img src="dfg.webp" alt="Обложка трека">
+        </div>
         <div class="track-name" id="trackName">The Stains of Time</div>
 
         <div class="player-controls">
