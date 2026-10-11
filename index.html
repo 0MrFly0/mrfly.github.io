@@ -22,7 +22,44 @@
       padding: 40px 16px;
     }
 
-    /* Расположение двух карточек */
+    /* ===== INTRO OVERLAY ===== */
+    #intro-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(20, 5, 15, 0.55);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      z-index: 9999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: opacity 0.7s ease, backdrop-filter 0.7s ease;
+    }
+
+    #intro-overlay.hidden {
+      opacity: 0;
+      pointer-events: none;
+      backdrop-filter: blur(0);
+    }
+
+    .click-text {
+      font-size: clamp(3.5rem, 12vw, 6rem);
+      font-weight: 800;
+      color: #fff5f7;
+      letter-spacing: 0.15em;
+      text-transform: lowercase;
+      text-shadow: 0 0 40px rgba(214, 58, 90, 0.6);
+      animation: pulse 2s ease-in-out infinite;
+      user-select: none;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.85; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.04); }
+    }
+
+    /* ===== LAYOUT ===== */
     .page-layout {
       width: 100%;
       max-width: 1100px;
@@ -32,7 +69,6 @@
       align-items: start;
     }
 
-    /* Общий стиль карточек */
     .card {
       background: #fff5f7;
       border: 3px solid #821111;
@@ -42,32 +78,18 @@
       min-width: 0;
       width: 100%;
       box-shadow: 0 10px 30px rgba(214, 58, 90, 0.2);
-
       opacity: 0;
       transform: translateY(24px);
       animation: cardAppear 0.8s cubic-bezier(.2, .75, .25, 1) forwards;
     }
 
-    /* Профиль появляется первым */
-    .profile-card {
-      animation-delay: 0.1s;
-    }
-
-    /* Карточка игр появляется чуть позже */
-    .games-card {
-      animation-delay: 0.3s;
-    }
+    .profile-card { animation-delay: 0.1s; }
+    .music-card  { animation-delay: 0.2s; }
+    .games-card  { animation-delay: 0.3s; }
 
     @keyframes cardAppear {
-      from {
-        opacity: 0;
-        transform: translateY(24px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(24px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
 
     h1 {
@@ -103,7 +125,103 @@
       font-weight: 700;
     }
 
-    /* Фильтры */
+    /* ===== CUSTOM MUSIC PLAYER ===== */
+    .music-player {
+      width: 100%;
+      max-width: 280px;
+      margin: 0 auto;
+      background: #fff0f3;
+      border: 3px solid #821111;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .player-cover {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      background: linear-gradient(145deg, #821111, #4f0000);
+      border: 2px solid #821111;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      color: #fff5f7;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .player-cover::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.15), transparent 60%);
+    }
+
+    .track-name {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: #5a2a3a;
+      line-height: 1.3;
+    }
+
+    .player-controls {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .progress-container {
+      width: 100%;
+      height: 6px;
+      background: #e8c8d0;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: #d63a5a;
+      transition: width 0.1s linear;
+    }
+
+    .time-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.75rem;
+      color: #821111;
+      font-weight: 600;
+    }
+
+    .play-btn {
+      width: 52px;
+      height: 52px;
+      background: #821111;
+      border: none;
+      color: #fff5f7;
+      font-size: 1.4rem;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto;
+      transition: background 0.2s, transform 0.15s;
+    }
+
+    .play-btn:hover {
+      background: #d63a5a;
+      transform: scale(1.05);
+    }
+
+    .play-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* ===== FILTERS & GAMES ===== */
     .filters {
       display: flex;
       flex-wrap: wrap;
@@ -132,12 +250,12 @@
 
     .filters button:focus-visible,
     .game:focus-visible,
-    .close-btn:focus-visible {
+    .close-btn:focus-visible,
+    .play-btn:focus-visible {
       outline: 3px solid #d63a5a;
       outline-offset: 3px;
     }
 
-    /* Сетка игр */
     .games-grid {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -186,7 +304,7 @@
       color: #d63a5a;
     }
 
-    /* Окно с рецензией */
+    /* ===== MODAL ===== */
     .modal-overlay {
       display: none;
       position: fixed;
@@ -219,15 +337,8 @@
     }
 
     @keyframes modalAppear {
-      from {
-        transform: translateY(12px);
-        opacity: 0;
-      }
-
-      to {
-        transform: translateY(0);
-        opacity: 1;
-      }
+      from { transform: translateY(12px); opacity: 0; }
+      to   { transform: translateY(0); opacity: 1; }
     }
 
     .modal img {
@@ -273,75 +384,85 @@
       line-height: 1;
     }
 
-    /* Планшеты и телефоны */
+    /* ===== RESPONSIVE ===== */
     @media (max-width: 760px) {
-      body {
-        padding: 20px 12px;
-      }
-
+      body { padding: 20px 12px; }
       .page-layout {
         grid-template-columns: 1fr;
         max-width: 560px;
         gap: 18px;
       }
-
-      .card {
-        padding: 24px 18px;
-      }
+      .card { padding: 24px 18px; }
     }
 
     @media (max-width: 420px) {
       .games-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
-
       .filters button {
         font-size: 0.8rem;
         padding: 6px 9px;
       }
     }
 
-    /* Отключение анимаций по настройкам устройства */
     @media (prefers-reduced-motion: reduce) {
-      *,
-      *::before,
-      *::after {
+      *, *::before, *::after {
         animation-duration: 0.01ms !important;
         animation-delay: 0ms !important;
         transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
       }
-
-      .card {
-        opacity: 1;
-        transform: none;
-      }
+      .card { opacity: 1; transform: none; }
+      .click-text { animation: none; }
     }
   </style>
 </head>
 
 <body>
 
+  <!-- INTRO OVERLAY -->
+  <div id="intro-overlay">
+    <div class="click-text">клик</div>
+  </div>
+
   <main class="page-layout">
 
-    <!-- КАРТОЧКА ПРОФИЛЯ -->
+    <!-- ПРОФИЛЬ -->
     <section class="card profile-card">
-      <img
-        src="square-image.jpg"
-        alt="Аватар MrFly"
-        class="avatar"
-      >
-
+      <img src="square-image.jpg" alt="Аватар MrFly" class="avatar">
       <div class="emoji">💻</div>
-
       <h1>MrFly</h1>
       <p>17yo Male</p>
       <p>Всё по-немногу</p>
     </section>
 
-    <!-- КАРТОЧКА ИГР И РЕЦЕНЗИЙ -->
-    <section class="card games-card">
+    <!-- МУЗЫКА -->
+    <section class="card music-card">
+      <h2 class="games-title">Музыка</h2>
 
+      <div class="music-player">
+        <div class="player-cover">🎵</div>
+        <div class="track-name" id="trackName">The Stains of Time</div>
+
+        <div class="player-controls">
+          <div class="progress-container" id="progressContainer">
+            <div class="progress-bar" id="progressBar"></div>
+          </div>
+
+          <div class="time-row">
+            <span id="currentTime">0:00</span>
+            <span id="duration">0:00</span>
+          </div>
+
+          <button class="play-btn" id="playBtn" aria-label="Play/Pause">▶</button>
+        </div>
+      </div>
+
+      <!-- Скрытый аудио-элемент -->
+      <audio id="audio" src="The Stains of Time.mp3.mp3" preload="metadata"></audio>
+    </section>
+
+    <!-- ИГРЫ -->
+    <section class="card games-card">
       <h2 class="games-title">Games</h2>
 
       <div class="filters">
@@ -355,25 +476,13 @@
 
       <div class="games-grid" id="gamesGrid">
 
-        <!-- FORSAKEN -->
-        <div
-          class="game"
-          data-score="гуд"
-          data-review="Крутой хоррор, атмосфера огонь, иногда бесит лагами."
-          tabindex="0"
-          role="button"
-          aria-label="Открыть рецензию Forsaken"
-        >
+        <div class="game" data-score="гуд" data-review="Крутой хоррор, атмосфера огонь, иногда бесит лагами." tabindex="0" role="button" aria-label="Открыть рецензию Forsaken">
           <img src="SPecteDestruction.webp" alt="Forsaken">
           <div class="name">Forsaken</div>
           <div class="score">8 / 10</div>
         </div>
 
-        <!-- GETTING OVER IT -->
-        <div
-          class="game"
-          data-score="эс"
-          data-review="Игра, которая в своё время заставила всех стримеров и летсплейщиков ломать свои девайсы.
+        <div class="game" data-score="эс" data-review="Игра, которая в своё время заставила всех стримеров и летсплейщиков ломать свои девайсы.
 
 Она умело маскируется под rage game и по большей части она и являлась бы просто стримерским слопом с корявым управлением и сделанным на коленке, если бы не её философия.
 
@@ -395,121 +504,118 @@
 
 Как по мне это уникальность, штучный продукт, а остальные игры данного семейства, по типу Boxman Struggle, я не вижу смысла проходить, так как они просто не поведают ничего нового.
 
-Ну и музыка в титрах отличная, заела в голове."
-          tabindex="0"
-          role="button"
-          aria-label="Открыть рецензию Getting Over It"
-        >
+Ну и музыка в титрах отличная, заела в голове." tabindex="0" role="button" aria-label="Открыть рецензию Getting Over It">
           <img src="square-image (1).jpg" alt="Getting Over It">
           <div class="name">Getting Over It with Bennett Foddy</div>
           <div class="score">10 / 10</div>
         </div>
 
-        <!-- THE BINDING OF ISAAC -->
-        <div
-          class="game"
-          data-score="гуд"
-          data-review="Затягивает на сотни часов. Рандомайз топ."
-          tabindex="0"
-          role="button"
-          aria-label="Открыть рецензию The Binding of Isaac"
-        >
-          <img
-            src="OBFoC2B2fAdbdKR9iPCJcDQaSKylLmhw.avif"
-            alt="The Binding of Isaac: Rebirth"
-          >
+        <div class="game" data-score="гуд" data-review="Затягивает на сотни часов. Рандомайз топ." tabindex="0" role="button" aria-label="Открыть рецензию The Binding of Isaac">
+          <img src="OBFoC2B2fAdbdKR9iPCJcDQaSKylLmhw.avif" alt="The Binding of Isaac: Rebirth">
           <div class="name">The Binding Of Isaac: Rebirth</div>
           <div class="score">8 / 10</div>
         </div>
 
-        <!-- CUPHEAD -->
-        <div
-          class="game"
-          data-score="норм"
-          data-review="Красиво и сложно, но иногда слишком жестко."
-          tabindex="0"
-          role="button"
-          aria-label="Открыть рецензию Cuphead"
-        >
+        <div class="game" data-score="норм" data-review="Красиво и сложно, но иногда слишком жестко." tabindex="0" role="button" aria-label="Открыть рецензию Cuphead">
           <img src="cuhead.png" alt="Cuphead">
           <div class="name">Cuphead</div>
           <div class="score">6 / 10</div>
         </div>
 
-        <!-- HOLLOW KNIGHT -->
-        <div
-          class="game"
-          data-score="гуд"
-          data-review="Атмосфера и мир — огонь. Боссы местами бесят."
-          tabindex="0"
-          role="button"
-          aria-label="Открыть рецензию Hollow Knight"
-        >
+        <div class="game" data-score="гуд" data-review="Атмосфера и мир — огонь. Боссы местами бесят." tabindex="0" role="button" aria-label="Открыть рецензию Hollow Knight">
           <img src="Hollow_Knight_2026_cover_art.jpg" alt="Hollow Knight">
           <div class="name">Hollow Knight</div>
           <div class="score">7 / 10</div>
         </div>
 
-        <!-- GTA V -->
-        <div
-          class="game"
-          data-score="норм"
-          data-review="Обычный опенворлд с так себе сюжетом и персонажами, ну и скамом гоев на деньги через онлайн версию. От неё хотя бы глаза не выкалывает, как от Сан Андреса."
-          tabindex="0"
-          role="button"
-          aria-label="Открыть рецензию GTA V"
-        >
-          <img
-            src="https://cdn.cloudflare.steamstatic.com/steam/apps/271590/library_600x900_2x.jpg"
-            alt="GTA V"
-          >
+        <div class="game" data-score="норм" data-review="Обычный опенворлд с так себе сюжетом и персонажами, ну и скамом гоев на деньги через онлайн версию. От неё хотя бы глаза не выкалывает, как от Сан Андреса." tabindex="0" role="button" aria-label="Открыть рецензию GTA V">
+          <img src="https://cdn.cloudflare.steamstatic.com/steam/apps/271590/library_600x900_2x.jpg" alt="GTA V">
           <div class="name">GTA V</div>
           <div class="score">5 / 10</div>
         </div>
 
       </div>
     </section>
-    <!-- Музыкальный плеер -->
-    <section class="card music-card" style="animation-delay: 0.2s;">
-      <h2 class="games-title">Музыка</h2>
-      
-      <audio controls style="width: 100%; margin-top: 10px;">
-        <source src="The Stains of Time.mp3.mp3" type="audio/mpeg">
-        Ваш браузер не поддерживает аудио.
-      </audio>
-      
-      <p style="margin-top: 12px; font-size: 0.9rem; color: #5a2a3a;">
-        The Stains of Time
-      </p>
-    </section>
+
   </main>
 
-  <!-- ОКНО РЕЦЕНЗИИ -->
-  <div
-    class="modal-overlay"
-    id="modal"
-    role="dialog"
-    aria-modal="true"
-    aria-labelledby="modalName"
-  >
+  <!-- МОДАЛКА РЕЦЕНЗИИ -->
+  <div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-labelledby="modalName">
     <div class="modal">
-
-      <button
-        class="close-btn"
-        id="closeModal"
-        aria-label="Закрыть"
-      >&times;</button>
-
+      <button class="close-btn" id="closeModal" aria-label="Закрыть">&times;</button>
       <img id="modalImg" src="" alt="">
       <h2 id="modalName"></h2>
       <div class="modal-score" id="modalScore"></div>
       <div class="modal-review" id="modalReview"></div>
-
     </div>
   </div>
 
   <script>
-    // ФИЛЬТРЫ ИГР
+    // ===== INTRO + АВТОЗАПУСК МУЗЫКИ =====
+    const overlay = document.getElementById('intro-overlay');
+    const audio = document.getElementById('audio');
+    const playBtn = document.getElementById('playBtn');
+    const progressBar = document.getElementById('progressBar');
+    const progressContainer = document.getElementById('progressContainer');
+    const currentTimeEl = document.getElementById('currentTime');
+    const durationEl = document.getElementById('duration');
+
+    let isPlaying = false;
+
+    overlay.addEventListener('click', () => {
+      overlay.classList.add('hidden');
+      
+      // Запускаем музыку сразу после клика
+      audio.play().then(() => {
+        isPlaying = true;
+        playBtn.textContent = '❚❚';
+      }).catch(err => {
+        console.log('Автозапуск заблокирован браузером:', err);
+      });
+    });
+
+    // ===== КАСТОМНЫЙ ПЛЕЕР =====
+    function formatTime(sec) {
+      const m = Math.floor(sec / 60);
+      const s = Math.floor(sec % 60);
+      return `${m}:${s.toString().padStart(2, '0')}`;
+    }
+
+    audio.addEventListener('loadedmetadata', () => {
+      durationEl.textContent = formatTime(audio.duration);
+    });
+
+    audio.addEventListener('timeupdate', () => {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progressBar.style.width = percent + '%';
+      currentTimeEl.textContent = formatTime(audio.currentTime);
+    });
+
+    audio.addEventListener('ended', () => {
+      isPlaying = false;
+      playBtn.textContent = '▶';
+      progressBar.style.width = '0%';
+    });
+
+    playBtn.addEventListener('click', () => {
+      if (isPlaying) {
+        audio.pause();
+        playBtn.textContent = '▶';
+      } else {
+        audio.play();
+        playBtn.textContent = '❚❚';
+      }
+      isPlaying = !isPlaying;
+    });
+
+    // Перемотка по клику на прогресс-бар
+    progressContainer.addEventListener('click', (e) => {
+      const rect = progressContainer.getBoundingClientRect();
+      const percent = (e.clientX - rect.left) / rect.width;
+      audio.currentTime = percent * audio.duration;
+    });
+
+    // ===== ФИЛЬТРЫ ИГР =====
     const buttons = document.querySelectorAll('.filters button');
     const games = document.querySelectorAll('.game');
 
@@ -517,43 +623,34 @@
       button.addEventListener('click', () => {
         buttons.forEach(item => item.classList.remove('active'));
         button.classList.add('active');
-
         const filter = button.dataset.filter;
-
         games.forEach(game => {
           const score = game.dataset.score;
           const show = filter === 'all' || score === filter;
-
           game.classList.toggle('hidden', !show);
         });
       });
     });
 
-    // ОКНО С РЕЦЕНЗИЕЙ
+    // ===== МОДАЛКА РЕЦЕНЗИЙ =====
     const modal = document.getElementById('modal');
     const closeBtn = document.getElementById('closeModal');
-
     const modalImg = document.getElementById('modalImg');
     const modalName = document.getElementById('modalName');
     const modalScore = document.getElementById('modalScore');
     const modalReview = document.getElementById('modalReview');
-
     let previousFocus = null;
 
     function openReview(game) {
       previousFocus = document.activeElement;
-
       const img = game.querySelector('img');
       const name = game.querySelector('.name');
       const score = game.querySelector('.score');
-
       modalImg.src = img.src;
       modalImg.alt = img.alt;
       modalName.textContent = name.textContent;
       modalScore.textContent = score.textContent;
-      modalReview.textContent =
-        game.dataset.review || 'Отзыв пока не написан.';
-
+      modalReview.textContent = game.dataset.review || 'Отзыв пока не написан.';
       modal.classList.add('open');
       document.body.style.overflow = 'hidden';
       closeBtn.focus();
@@ -562,40 +659,25 @@
     function closeReview() {
       modal.classList.remove('open');
       document.body.style.overflow = '';
-
-      if (previousFocus) {
-        previousFocus.focus();
-      }
+      if (previousFocus) previousFocus.focus();
     }
 
     games.forEach(game => {
-      game.addEventListener('click', () => {
-        openReview(game);
-      });
-
-      // Открытие рецензии клавишами Enter и Space
-      game.addEventListener('keydown', event => {
-        if (event.key === 'Enter' || event.key === ' ') {
-          event.preventDefault();
+      game.addEventListener('click', () => openReview(game));
+      game.addEventListener('keydown', e => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
           openReview(game);
         }
       });
     });
 
     closeBtn.addEventListener('click', closeReview);
-
-    // Закрытие по нажатию на затемнённый фон
-    modal.addEventListener('click', event => {
-      if (event.target === modal) {
-        closeReview();
-      }
+    modal.addEventListener('click', e => {
+      if (e.target === modal) closeReview();
     });
-
-    // Закрытие клавишей Escape
-    document.addEventListener('keydown', event => {
-      if (event.key === 'Escape' && modal.classList.contains('open')) {
-        closeReview();
-      }
+    document.addEventListener('keydown', e => {
+      if (e.key === 'Escape' && modal.classList.contains('open')) closeReview();
     });
   </script>
 
