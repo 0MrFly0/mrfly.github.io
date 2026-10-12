@@ -20,6 +20,18 @@
       font-family: system-ui, sans-serif;
       color: #5a2a3a;
       padding: 40px 16px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ===== FLOATING PARTICLES ===== */
+    #particles-canvas {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;          /* ниже модалки (100) и интро (9999) */
+      pointer-events: none; /* не мешают кликам */
     }
 
     /* ===== INTRO OVERLAY ===== */
@@ -67,6 +79,8 @@
       grid-template-columns: minmax(260px, 0.85fr) minmax(0, 1.5fr);
       gap: 24px;
       align-items: start;
+      position: relative;
+      z-index: 2; /* выше частиц */
     }
 
     .card {
@@ -425,6 +439,9 @@
 
 <body>
 
+  <!-- FLOATING PARTICLES -->
+  <canvas id="particles-canvas"></canvas>
+
   <!-- INTRO OVERLAY -->
   <div id="intro-overlay">
     <div class="click-text">клик</div>
@@ -554,6 +571,96 @@
   </div>
 
   <script>
+    // ===== FLOATING PARTICLES =====
+    (function initParticles() {
+      const canvas = document.getElementById('particles-canvas');
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+
+      // Цвета из градиента фона + акцентные
+      const COLORS = [
+        'rgba(53, 14, 66, 0.85)',   // #350e42
+        'rgba(79, 0, 0, 0.85)',     // #4f0000
+        'rgba(130, 17, 17, 0.75)',  // #821111
+        'rgba(214, 58, 90, 0.65)',  // #d63a5a
+        'rgba(90, 42, 58, 0.7)'     // #5a2a3a
+      ];
+
+      let particles = [];
+      let animationId = null;
+      let width = 0;
+      let height = 0;
+
+      function resize() {
+        width = window.innerWidth;
+        height = window.innerHeight;
+        canvas.width = width;
+        canvas.height = height;
+      }
+
+      function createParticle() {
+        const size = Math.random() * 4 + 1.5; // 1.5–5.5 px
+        return {
+          x: Math.random() * width,
+          y: Math.random() * height,
+          size: size,
+          baseSize: size,
+          speedX: (Math.random() - 0.5) * 0.35,
+          speedY: (Math.random() - 0.5) * 0.35 - 0.15, // лёгкий уход вверх
+          color: COLORS[Math.floor(Math.random() * COLORS.length)],
+          opacity: Math.random() * 0.5 + 0.35,
+          pulse: Math.random() * Math.PI * 2,
+          pulseSpeed: 0.01 + Math.random() * 0.02
+        };
+      }
+
+      function init() {
+        resize();
+        const count = Math.min(70, Math.floor((width * height) / 18000)); // адаптивно
+        particles = Array.from({ length: count }, createParticle);
+      }
+
+      function draw() {
+        ctx.clearRect(0, 0, width, height);
+
+        for (const p of particles) {
+          // пульсация размера и яркости
+          p.pulse += p.pulseSpeed;
+          const scale = 1 + Math.sin(p.pulse) * 0.25;
+          const currentSize = p.baseSize * scale;
+          const alpha = p.opacity * (0.75 + Math.sin(p.pulse) * 0.25);
+
+          // один сплошной шарик (без оболочки)
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, currentSize, 0, Math.PI * 2);
+          ctx.fillStyle = p.color.replace(/[\d.]+\)$/, alpha + ')');
+          ctx.fill();
+
+          // движение
+          p.x += p.speedX;
+          p.y += p.speedY;
+
+          // выход за край → телепорт с другой стороны
+          if (p.x < -10) p.x = width + 10;
+          if (p.x > width + 10) p.x = -10;
+          if (p.y < -10) p.y = height + 10;
+          if (p.y > height + 10) p.y = -10;
+        }
+
+        animationId = requestAnimationFrame(draw);
+      }
+
+      // уважение prefers-reduced-motion
+      const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (!prefersReduced) {
+        init();
+        draw();
+        window.addEventListener('resize', () => {
+          init();
+        });
+      }
+    })();
+
     // ===== INTRO + АВТОЗАПУСК МУЗЫКИ =====
     const overlay = document.getElementById('intro-overlay');
     const audio = document.getElementById('audio');
